@@ -1,4 +1,4 @@
-/*
+*
 CoderPad provides a basic SQL sandbox with the following schema.
 You can also use commands like `show tables` and `desc employees`
 
@@ -18,106 +18,91 @@ departments                  |  |  |  employees_projects
 +---------------+---------+           +---------------+---------+
 */
 
- # select * from employees ;
+  select * from employees ;
  
+  select start_date,date_sub(start_date,interval 60 day) new_dt from projects;
  
-#  select * from employees ;
+ use dayofweek,dayofmonth,dayofyear,month,now(),
  
-#  select first_name, sum(case when department_id = 1 then salary else 0 end) as Ones,
-#  sum(case when department_id = 2 then salary else 0 end) as Twos,
-#  sum(case when department_id = 3 then salary else 0 end) as threes,
-#  sum(case when department_id = 4 then salary else 0 end) as Fours,
-#  sum(case when department_id = 5 then salary else 0 end) as Fives
-#  from employees group by 1;
- 
-
- 
- 
- # select rank() over (partition by e.department_id order by e.salary desc) as ranksk ,e.* from employees e order by e.department_id,e.salary desc;
- 
- # select sum(e.salary) over (partition by e.department_id order by e.salary desc range between unbounded preceding and unbounded following) as analfunc ,e.* from employees e order by e.department_id,e.salary desc;
- 
- # select sum(e.salary) over (partition by e.department_id order by e.salary desc range between current row and unbounded following) as analfunc ,e.* from employees e order by e.department_id,e.salary desc;
- 
-# select FIRST_VALUE(e.salary) over (partition by e.department_id order by e.salary desc) - e.salary as analfunc ,e.* from employees e order by e.department_id,e.salary desc; 
-
-# select LAST_VALUE(e.salary) over (partition by e.department_id order by e.salary desc range between unbounded preceding and unbounded following) - e.salary as analfunc ,e.* from employees e order by e.department_id,e.salary desc;
-
+  select date_format(start_date,'%m%Y%d') from projects;
  
  
  
+  select * from employees where first_name  REGEXP '^A';
+  select * from employees where first_name  REGEXP 'n$';
+   Most of rules are same as python 
+   +,*,?,.,^,$,\d,\D,\w,\W etc have same meaning
+ 
+ 
+  
+ 
+ 
+  select * from employees ;
+ 
+  select first_name, sum(case when department_id = 1 then salary else 0 end) as Ones,
+  sum(case when department_id = 2 then salary else 0 end) as Twos,
+  sum(case when department_id = 3 then salary else 0 end) as threes,
+  sum(case when department_id = 4 then salary else 0 end) as Fours,
+  sum(case when department_id = 5 then salary else 0 end) as Fives
+  from employees group by 1;
+ 
+
+ 
+ 
+  select rank() over (partition by e.department_id order by e.salary desc) as ranksk ,e.* from employees e order by e.department_id,e.salary desc;
+ 
+  select sum(e.salary) over (partition by e.department_id order by e.salary desc range between unbounded preceding and unbounded following) as analfunc ,e.* from employees e order by e.department_id,e.salary desc;
+ 
+  select sum(e.salary) over (partition by e.department_id order by e.salary desc range between current row and unbounded following) as analfunc ,e.* from employees e order by e.department_id,e.salary desc;
+ 
+ select FIRST_VALUE(e.salary) over (partition by e.department_id order by e.salary desc) - e.salary as analfunc ,e.* from employees e order by e.department_id,e.salary desc; 
+
+ select LAST_VALUE(e.salary) over (partition by e.department_id order by e.salary desc range between unbounded preceding and unbounded following) - e.salary as analfunc ,e.* from employees e order by e.department_id,e.salary desc;
+
  
  
  
-#  set @ranks := 0 , @dept := 0;
  
-#  select @ranks := (case when @dept = e.department_id then @ranks+1 else 1 end) as ranks, @dept := e.department_id as depts,e.*
-#  from employees e order by department_id,salary desc
+ 
+ 
+  set @ranks := 0 , @dept := 0;
+ 
+  select @ranks := (case when @dept = e.department_id then @ranks+1 else 1 end) as ranks, @dept := e.department_id as depts,e.*
+  from employees e order by department_id,salary desc
 
 
 
 
 
-# set @ranks := 0;
-# select * from (
-# select @ranks := @ranks +1 as ranks,e.* from employees e order by salary desc )  A where ranks = 2 ;
+ set @ranks := 0;
+ select * from (
+ select @ranks := @ranks +1 as ranks,e.* from employees e order by salary desc )  A where ranks = 2 ;
 
 
 
 
 
-# ## Rank query using co-related subquery
-# select * from employees e1 where 2-1 = ( select count(distinct salary) from employees e2 where e1.salary < e2.salary)
+  Rank query using co-related subquery
+ select * from employees e1 where 2-1 = ( select count(distinct salary) from employees e2 where e1.salary < e2.salary)
 
 
 
-## Below is co-related subquery
-# select * from employees e1 where salary >= ( select avg(salary) from employees e2 where e1.department_id = e2.department_id) ;
+ Below is co-related subquery
+ select * from employees e1 where salary >= ( select avg(salary) from employees e2 where e1.department_id = e2.department_id) ;
 
 
 
-# select department_id,department_id<<2 xors,department_id&5 ands,department_id|5 as ors from employees ;
+ select department_id,department_id<<2 xors,department_id&5 ands,department_id|5 as ors from employees ;
 
 
-#### Break 3
-# create table new_table as
-# select *  from employees where upper(first_name) like '%A%' 
+ Break 3
+ create table new_table as
+ select *  from employees where upper(first_name) like '%A%' 
 
-# select ifnull(e.first_name,"") as first_name, d.name as department_name ,concat(ifnull(e.first_name,"")," " ,d.name) from employees e right outer join departments d
-# on e.department_id = d.id;
+ select ifnull(e.first_name,"") as first_name, d.name as department_name ,concat(ifnull(e.first_name,"")," " ,d.name) from employees e right outer join departments d
+ on e.department_id = d.id;
 
-# select length(first_name) as len,left(first_name,3) as lft ,right(first_name,3) as rgt , lower(first_name) as lwr, upper(first_name) as upr, substr(first_name,2,4) sbs , replace(first_name,'a','z') rp from employees e;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#### Break 2
-# select e.first_name,d.name as department_name from employees e right outer join departments d
-# on e.department_id = d.id;
-
-# select d.name as department_name from employees e right outer join departments d
-# on e.department_id = d.id
-# where e.first_name is NULL;
-
-
-# select d.name as department_name,ifnull(sum(e.salary),0) as net_salary,count(1) as employees_no from employees e right outer join departments d
-# on e.department_id = d.id
-# group by d.name 
-# having ifnull(sum(e.salary),0) > 15000
-# order by 2 desc ;
-
-# select * from departments where id not in (select department_id from employees)
+ select length(first_name) as len,left(first_name,3) as lft ,right(first_name,3) as rgt , lower(first_name) as lwr, upper(first_name) as upr, substr(first_name,2,4) sbs , replace(first_name,'a','z') rp from employees e;
 
 
 
@@ -132,23 +117,54 @@ departments                  |  |  |  employees_projects
 
 
 
-###Simples below :
-# select * from employees where salary between 20000 and 50000;
-# select * from employees where first_name like '%i__';
-# select * from employees order by salary desc , first_name ;
-# select * from employees where salary in (20000);
-# insert into employees (id,first_name,last_name,salary,department_id) 
-# values (10,'IK','KUL',1000000,2);
 
-# select * from employees;
+ Break 2
+ select e.first_name,d.name as department_name from employees e right outer join departments d
+ on e.department_id = d.id;
 
-# update employees set salary = 100000 where first_name = 'IK';
+ select d.name as department_name from employees e right outer join departments d
+ on e.department_id = d.id
+ where e.first_name is NULL;
 
-# delete from employees where first_name = 'Kalia' ;
 
-# select max(salary),min(salary) from employees ;
+ select d.name as department_name,ifnull(sum(e.salary),0) as net_salary,count(1) as employees_no from employees e right outer join departments d
+ on e.department_id = d.id
+ group by d.name 
+ having ifnull(sum(e.salary),0) > 15000
+ order by 2 desc ;
 
-# select * from employees where first_name like 'A%'
+ select * from departments where id not in (select department_id from employees)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Simples below :
+ select * from employees where salary between 20000 and 50000;
+ select * from employees where first_name like '%i__';
+ select * from employees order by salary desc , first_name ;
+ select * from employees where salary in (20000);
+ insert into employees (id,first_name,last_name,salary,department_id) 
+ values (10,'IK','KUL',1000000,2);
+
+ select * from employees;
+
+ update employees set salary = 100000 where first_name = 'IK';
+
+ delete from employees where first_name = 'Kalia' ;
+
+ select max(salary),min(salary) from employees ;
+
+ select * from employees where first_name like 'A%'
 
 
 
